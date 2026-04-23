@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const url= "https://book-del-backend.onrender.com"
   const initialUser = JSON.parse(localStorage.getItem("user")) || null;
 
   const [authUser, setAuthUser] = useState(initialUser);
