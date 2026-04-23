@@ -5,15 +5,21 @@ import { Link } from "react-router-dom";
 
 function Course() {
   const [book, setBook] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 🔥 Render Backend URL
+  const BASE_URL = "https://book-del-backend.onrender.com";
 
   useEffect(() => {
     const getBook = async () => {
       try {
-        const res = await axios.get("http://localhost:4001/book");
+        const res = await axios.get(`${BASE_URL}/book`);
         console.log(res.data);
         setBook(res.data);
       } catch (error) {
         console.log("Error fetching books:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -22,6 +28,8 @@ function Course() {
 
   return (
     <div className="max-w-screen-2xl container mx-auto md:px-20 px-4">
+      
+      {/* Header */}
       <div className="mt-28 text-center">
         <h1 className="text-2xl md:text-4xl">
           We're delighted to have you{" "}
@@ -29,7 +37,7 @@ function Course() {
         </h1>
 
         <p className="mt-12">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit...
+          Explore our collection of amazing books and enhance your knowledge.
         </p>
 
         <Link to="/">
@@ -39,14 +47,19 @@ function Course() {
         </Link>
       </div>
 
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6">
-        {book.length === 0 ? (
+      {/* Books Section */}
+      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        
+        {loading ? (
+          <p className="text-center col-span-4">Loading books...</p>
+        ) : book.length === 0 ? (
           <p className="text-center col-span-4">No books available</p>
         ) : (
           book.map((item) => (
             <Cards key={item._id} item={item} />
           ))
         )}
+        
       </div>
     </div>
   );

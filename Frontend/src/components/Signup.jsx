@@ -10,6 +10,8 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const BASE_URL = "https://book-del-backend.onrender.com";
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -29,13 +31,19 @@ const Signup = () => {
       setLoading(true);
 
       const res = await axios.post(
-        "http://localhost:4001/user/signup",
+        `${BASE_URL}/user/signup`,
         formData
       );
 
       alert("Signup Successful ✅");
 
       console.log(res.data);
+
+      setFormData({
+        fullname: "",
+        email: "",
+        password: "",
+      });
 
     } catch (error) {
       console.log(error.response?.data);

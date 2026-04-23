@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [isSignup, setIsSignup] = useState(false); // 🔥 toggle
+  const [isSignup, setIsSignup] = useState(false);
   const [formData, setFormData] = useState({
     fullname: "",
     email: "",
@@ -14,6 +14,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [authUser, setAuthUser] = useAuth();
   const navigate = useNavigate();
+
+  // 🔥 Your Render Backend URL
+  const BASE_URL = "https://book-del-backend.onrender.com";
 
   const handleChange = (e) => {
     setFormData({
@@ -25,7 +28,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password || (isSignup && !formData.fullname)) {
+    if (
+      !formData.email ||
+      !formData.password ||
+      (isSignup && !formData.fullname)
+    ) {
       alert("All fields are required");
       return;
     }
@@ -33,13 +40,14 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const url = isSignup
-        ? "http://localhost:4001/user/signup"
-        : "http://localhost:4001/user/login";
+      const endpoint = isSignup ? "/user/signup" : "/user/login";
 
-      const res = await axios.post(url, formData);
+      const res = await axios.post(
+        `${BASE_URL}${endpoint}`,
+        formData
+      );
 
-      // 👉 Only login returns token
+      // 👉 Login logic
       if (!isSignup) {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -47,16 +55,19 @@ const Login = () => {
 
         alert("Login Successful ✅");
 
-        document.getElementById("login_modal").close();
+        const modal = document.getElementById("login_modal");
+        if (modal) modal.close();
+
         navigate("/course");
-      } else {
+      } 
+      // 👉 Signup logic
+      else {
         alert("Signup Successful ✅");
-        setIsSignup(false); // switch to login
+        setIsSignup(false);
       }
 
     } catch (error) {
       console.log(error.response?.data);
-
       alert(error.response?.data?.message || "Something went wrong ❌");
     } finally {
       setLoading(false);
@@ -64,13 +75,13 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="p-4">
       <h2 className="text-2xl font-bold text-center mb-4">
         {isSignup ? "Signup" : "Login"}
       </h2>
 
       <form onSubmit={handleSubmit}>
-        {/* Signup field */}
+        {/* Full Name (Signup only) */}
         {isSignup && (
           <input
             type="text"
@@ -82,6 +93,7 @@ const Login = () => {
           />
         )}
 
+        {/* Email */}
         <input
           type="email"
           name="email"
@@ -91,6 +103,7 @@ const Login = () => {
           className="w-full p-2 border rounded mb-3"
         />
 
+        {/* Password */}
         <input
           type="password"
           name="password"
@@ -100,6 +113,7 @@ const Login = () => {
           className="w-full p-2 border rounded mb-3"
         />
 
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
@@ -115,9 +129,11 @@ const Login = () => {
         </button>
       </form>
 
-      {/* Toggle */}
+      {/* Toggle Login/Signup */}
       <p className="text-center mt-4">
-        {isSignup ? "Already have an account?" : "Don't have an account?"}
+        {isSignup
+          ? "Already have an account?"
+          : "Don't have an account?"}
         <span
           className="text-blue-500 cursor-pointer ml-1"
           onClick={() => setIsSignup(!isSignup)}
