@@ -22,9 +22,17 @@ function Navbar() {
       <li>
         <Link to="/">Home</Link>
       </li>
+
+      {/* 🔥 Protected Course Link */}
       <li>
-        <Link to="/course">Course</Link>
+        <Link
+          to={authUser ? "/course" : "/login"}
+          state={{ from: "/course" }}
+        >
+          Course
+        </Link>
       </li>
+
       <li>
         <a>Contact</a>
       </li>
@@ -44,11 +52,7 @@ function Navbar() {
         {/* LEFT */}
         <div className="navbar-start">
           <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost lg:hidden"
-            >
+            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
               ☰
             </div>
 
@@ -85,21 +89,11 @@ function Navbar() {
             <Logout />
           ) : (
             <>
-              <button
-                className="bg-black text-white px-3 py-2 rounded-md hover:bg-gray-800"
-                onClick={() =>
-                  document.getElementById("login_modal").showModal()
-                }
-              >
-                Login
-              </button>
-
-              {/* Modal */}
-              <dialog id="login_modal" className="modal">
-                <div className="modal-box">
-                  <Login />
-                </div>
-              </dialog>
+              <Link to="/login">
+                <button className="bg-black text-white px-3 py-2 rounded-md hover:bg-gray-800">
+                  Login
+                </button>
+              </Link>
             </>
           )}
         </div>
